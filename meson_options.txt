@@ -1,0 +1,6 @@
+option('systemd', type : 'boolean', value : true)
+option('runstatedir', type : 'string', value : '/run')
+option('systemdsystemunitdir', type : 'string', value : 'from_pkgconfig')
+option('speech-tools-include', type: 'string', value : '/usr/include/speech_tools')
+option('festival-include', type: 'string', value : '/usr/include/festival')
+

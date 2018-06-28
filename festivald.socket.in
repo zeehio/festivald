@@ -1,0 +1,8 @@
+[Socket]
+ListenStream=@runstatedir@/festivald.socket
+SocketUser=festivald
+SocketGroup=festivald
+SocketMode=0660
+
+[Install]
+WantedBy=sockets.target
