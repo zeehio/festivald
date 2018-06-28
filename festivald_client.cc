@@ -53,8 +53,12 @@
 #include <sys/un.h>
 #include <sys/wait.h>
 
-#include <festival.h>
+#include <EST_cmd_line.h> /* parse_cmd_line */
+#include <EST_io_aux.h> /* make_tmp_filename() */
+#include <EST_cutils.h> /* streq */
+#include <EST_Wave.h>
 #include <EST_String.h>
+#include <EST_Option.h>
 
 using namespace std;
 
@@ -73,9 +77,6 @@ static EST_String prolog = "";
 static int withlisp = FALSE;
 static EST_String aucommand = "";
 static int async_mode = FALSE;
-
-// So that festival_error works (and I don't need the whole of libFestival.a)
-void festival_tidy_up() { return; }
 
 
 #define DEFAULT_SOCKET_PATH "festivald.socket"
@@ -176,10 +177,12 @@ int main(int argc, char **argv)
   else
     async_mode = FALSE;
   
+  // Connect to socket:
   int fd = -1;
   if (festival_socket_client(socket_path, &fd) < 0) {
     return -1;
   }
+  // Open socket file descriptor
   FILE *serverfd = fdopen(fd,"wb");
 
   if (al.present("--prolog"))
@@ -284,8 +287,7 @@ static void ttw_file(SERVER_FD serverfd, const EST_String &file)
 
 static void copy_to_server(FILE *fdin,SERVER_FD serverfd)
 {
-  // Open a connection and copy everything from stdin to 
-  // server
+  // Open a connection and copy everything from fdin to server
   int c,n;
   int state=0;
   int bdepth=0;
