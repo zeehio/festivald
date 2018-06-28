@@ -1,0 +1,28 @@
+Source: festivald
+Section: sound
+Priority: optional
+Maintainer: Debian TTS Team <tts-project@lists.alioth.debian.org>
+Uploaders: Sergio Oller <sergioller@gmail.com>
+Build-Depends: debhelper (>=10.4),
+               meson (>= 0.42.0),
+               pkg-config,
+               libestools-dev (>= 1:2.5.0-5),
+               festival-dev (>= 1:2.5.0-2),
+               libsystemd-dev [linux-any],
+               systemd [linux-any]
+Standards-Version: 4.1.4
+Homepage: https://github.com/zeehio/festivald
+Vcs-Git: https://salsa.debian.org/tts-team/festivald.git
+Vcs-Browser: https://salsa.debian.org/tts-team/festivald.git
+
+Package: festivald
+Architecture: any
+Depends: adduser, ${shlibs:Depends}, ${misc:Depends}
+Description: Festival Speech Synthesis server with UNIX sockets
+ festivald provides a Festival server using UNIX sockets. Its main
+ advantage with respect to running Festival in server mode is that
+ instead of providing a shell at localhost protected by a password
+ sent in plain text, it provides a UNIX socket protected by either
+ the permissions of the directory where the socket is created or
+ systemd capabilities.
+
