@@ -1,0 +1,23 @@
+# This is the configuration file for festivald.
+# It should be sourced before starting festivald.
+
+## The festival library to use:
+#FESTIVALD_LIBDIR=@datadir@/festival
+
+## The heap size. You may need to increase it if you use a very large voice
+#FESTIVALD_HEAP_SIZE=10000000
+
+## Whether or not festivald will be initialized
+#FESTIVALD_LOAD_INIT=1
+
+## Maximum number of clients to accept:
+#FESTIVALD_MAX_CLIENTS=10
+
+## Path to the festivald.socket.
+## When the socket is created by systemd (systemd socket activation), it is ignored.
+## Otherwise festivald will create the socket here (the directory should exist
+## and have thought restricted permissions, as it leaves an open shell to anyone
+## with access to the socket).
+## Note that the default value may be accessible by too many users...
+#FESTIVALD_SOCKET_PATH="@runstatedir@/festivald.socket"
+

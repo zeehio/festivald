@@ -79,24 +79,21 @@ static void log_message(int client, const char *message);
  * socket accept/create function */
 int main(int argc, char **argv)
 {
+  int load_init_files = 1;
   EST_Option al;
-  EST_StrList files; // Needed by speech tools but ignored
-  int heap_size = FESTIVALD_HEAP_SIZE;
+  EST_StrList extra_args; // Needed by API, speech tools but ignored
+  long int heap_size = 0;
   int max_clients = DEFAULT_MAX_CLIENTS;
   const char *socket_path = DEFAULT_SOCKET_PATH;
   parse_command_line(argc, argv, 
                      EST_String("Usage:\n")+
-                       "festivald  <options> ...\n"+
-                       "In evaluation mode \"filenames\" starting with ( are evaluated inline\n"+
-                       "Festival Speech Synthesis System: "+ festival_version +"\n"+
+                       "festivald  <options>\n"+
+                       "festivald "+ festivald_version + "(with festival " + festival_version + ")\n"+
                        "-q            Load no default setup files\n"+
                        "--libdir <string>\n"+
                        "              Set library directory pathname\n"+
-                       "--language <string>\n"+
-                       "              Run in named language, default is\n"+
-                       "              english, spanish and welsh are available\n"+
                        "--socket <string>\n"+
-                       "              Path where the socket will be created\n"+
+                       "              Socket path. It should be in a directory with restricted permissions\n"+
 #ifdef WITH_SYSTEMD
                        "              (Unused if systemd passes the socket)\n"+
 #endif
@@ -107,34 +104,67 @@ int main(int argc, char **argv)
                        "              to be changed from its default\n"+
                        "-v            Display version number and exit\n"+
                        "--version     Display version number and exit\n",
-                       files, al);
+                       extra_args, al);
   
   if ((al.present("-v")) || (al.present("--version")))
   {
-    std::cout << "festivald server version " << festivald_version <<
-      "with Festival Speech Synthesis System version " << festival_version << std::endl;
+    std::cout << "festivald version " << festivald_version <<
+      "with festival version " << festival_version << std::endl;
     return 0;
   }
   
   if (al.present("--libdir"))
     festival_libdir = wstrdup(al.val("--libdir"));
-  else if (getenv("FESTLIBDIR") != 0)
-    festival_libdir = getenv("FESTLIBDIR");
-  
+  else if (getenv("FESTIVALD_LIBDIR") != 0)
+    festival_libdir = getenv("FESTIVALD_LIBDIR");
+  // Default value is already set by festival
+
+  // Set heap
   if (al.present("--heap"))
     heap_size = al.ival("--heap");
-  
-  festival_initialize(!al.present("-q"),heap_size);
-  
-  if (al.present("--language"))
-    festival_init_lang(al.val("--language"));
-  
+  else if (getenv("FESTIVALD_HEAP_SIZE") != 0)
+    heap_size = strtol(getenv("FESTIVALD_HEAP_SIZE"), NULL, 10);
+  else
+    heap_size = FESTIVALD_HEAP_SIZE;
+
+  // Validate heap
+  if (heap_size <= 0)
+    heap_size = FESTIVALD_HEAP_SIZE;
+
+  // Set load init files
+  if (al.present("-q"))
+    load_init_files = 0;
+  else if (getenv("FESTIVALD_LOAD_INIT") != 0)
+    load_init_files = strtol(getenv("FESTIVALD_LOAD_INIT"), NULL, 10);
+  else
+    load_init_files = 1;
+
+  // Validate load_init_files
+  if (load_init_files != 0)
+    load_init_files = 1;
+
+  // Set max_clients
   if (al.present("--max-clients"))
     max_clients = al.ival("--max-clients");
+  else if (getenv("FESTIVALD_MAX_CLIENTS") != 0)
+    max_clients = strtol(getenv("FESTIVALD_MAX_CLIENTS"), NULL, 10);
+  else
+    max_clients = DEFAULT_MAX_CLIENTS;
+
+  // Validate max_clients
+  if (max_clients < 0)
+    max_clients = DEFAULT_MAX_CLIENTS;
+
   
   if (al.present("--socket"))
     socket_path = al.val("--socket");
+  else if (getenv("FESTIVALD_SOCKET_PATH") != 0)
+    socket_path = getenv("FESTIVALD_SOCKET_PATH");
+  else
+    socket_path = DEFAULT_SOCKET_PATH;
+
   
+  festival_initialize(load_init_files, heap_size);
   /* Gets the socket from systemd or creates one at the socket path */
   int f_socket = -1;
   bool socket_created = false;
@@ -148,7 +178,9 @@ int main(int argc, char **argv)
   if (socket_created) {
     unlink(socket_path);
   }
-  // FIXME: Deallocate f_socket
+  if (f_socket != -1) {
+    close(f_socket);
+  }
   return retval;
 }
 
@@ -171,21 +203,22 @@ static int festivald_nosystemd(int *f_socket, const char *socket_path, bool* soc
     return -1;
   }
   
-  // FIXME: The socket should be bound with the right permissions!
   memset(&sa, 0, sizeof(sa));
   sa.un.sun_family = AF_UNIX;
   strncpy(sa.un.sun_path, socket_path, sizeof(sa.un.sun_path));
   unlink(socket_path);
   if (bind(fd, &sa.sa, sizeof(sa)) < 0) {
-    // FIXME: Deallocate fd
     std::cerr << "bind(): " << strerror(errno) << std::endl;
+    if (fd != -1)
+        close(fd);
     return -1;
   }
   *socket_created = true;
   
   if (listen(fd, SOMAXCONN) < 0) {
-    // FIXME: Deallocate fd
     std::cerr << "listen(): " << strerror(errno) << std::endl;
+    if (fd != -1)
+        close(fd);
     return -1;
   }
   *f_socket = fd;
@@ -222,11 +255,7 @@ static int festival_accept_connections(int fd, int max_clients)
   int fd1, statusp;
   int client_name = 0, num_clients = 0;
   pid_t pid;
-  
-  if (max_clients < 0) {
-    max_clients = DEFAULT_MAX_CLIENTS;
-  }
-  
+    
   while(1)                          // never exits except by signals
   {
     if((fd1 = accept(fd, 0, 0)) < 0)

@@ -1,8 +1,8 @@
 [Socket]
 ListenStream=@runstatedir@/festivald.socket
-SocketUser=festivald
-SocketGroup=festivald
-SocketMode=0660
+SocketUser=@systemd-socket-user@
+SocketGroup=@systemd-socket-group@
+SocketMode=@systemd-socket-perm@
 
 [Install]
 WantedBy=sockets.target

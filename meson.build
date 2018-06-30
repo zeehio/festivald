@@ -2,17 +2,13 @@ project('festivald', 'cpp')
 
 cpp = meson.get_compiler('cpp')
 
-## Variables to store include directories and dependencies:
-
-# - For festivald:
+## Variables to store dependencies:
 festivald_cargs = []
 festivald_deps = []
-
-# - For festivald_client:
 festivald_client_deps = []
 
 ## systemd dependency:
-if get_option('systemd')
+if get_option('with-systemd')
     libsystemd = dependency('libsystemd', required: true)
     festivald_deps += libsystemd
     festivald_cargs += ['-DWITH_SYSTEMD']
@@ -111,30 +107,50 @@ festivald_client = executable('festivald_client', ['festivald_client.cc'],
            install: true)
 
 
-if get_option('systemd')
+
+festivald_conf_vars = configuration_data()
+
+bindir = join_paths(get_option('prefix'), get_option('bindir'))
+festivald_conf_vars.set('bindir', bindir)
+
+datadir = join_paths(get_option('prefix'), get_option('datadir'))
+festivald_conf_vars.set('datadir', datadir)
+
+
+sysconfdir = join_paths(get_option('prefix'), get_option('sysconfdir'))
+festivald_conf_dir = join_paths(sysconfdir, 'festivald')
+festivald_conf_vars.set('festivald_conf_dir', festivald_conf_dir)
+
+# This is the directory where the systemd managed festivald socket will be created: 
+runstatedir = join_paths(get_option('prefix'), get_option('runstatedir'))
+festivald_conf_vars.set('runstatedir', runstatedir)
+
+if get_option('with-systemd')
   ## The systemd unit service and socket files:
-  bindir = join_paths(get_option('prefix'), get_option('bindir'))
-  sysconfdir = join_paths(get_option('prefix'), get_option('sysconfdir'))
-  sharedstatedir = join_paths(get_option('prefix'), get_option('sharedstatedir'))
-  # This is the directory where the systemd managed festivald socket will be created: 
-  runstatedir = join_paths(get_option('prefix'), get_option('runstatedir'))
-  systemd_unit_conf = configuration_data()
-  systemd_unit_conf.set('bindir', bindir)
-  systemd_unit_conf.set('sysconfdir', sysconfdir)
-  systemd_unit_conf.set('runstatedir', runstatedir)
+
+  foreach key : ['systemd-socket-user', 'systemd-socket-group', 'systemd-socket-perm']
+    festivald_conf_vars.set(key, get_option(key))
+  endforeach
 
   unit = configure_file(
     input: 'festivald.service.in',
     output: 'festivald.service',
-    configuration: systemd_unit_conf,
+    configuration: festivald_conf_vars,
     install_dir: systemdsystemunitdir
   )
 
   socket = configure_file(
     input: 'festivald.socket.in',
     output: 'festivald.socket',
-    configuration: systemd_unit_conf,
+    configuration: festivald_conf_vars,
     install_dir: systemdsystemunitdir
   )
 endif
+
+festivald_conf = configure_file(
+  input: 'festivald.conf.in',
+  output: 'festivald.conf',
+  configuration: festivald_conf_vars,
+  install_dir: festivald_conf_dir
+)
 

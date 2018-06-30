@@ -3,7 +3,7 @@ Description=Festivald speech synthesis service
 
 [Service]
 Type=simple
-EnvironmentFile=-@sysconfdir@/festivald/festivald.conf
+EnvironmentFile=-@festivald_conf_dir@/festivald.conf
 ExecStart=@bindir@/festivald
 Sockets=festivald.socket
 PrivateTmp=yes
