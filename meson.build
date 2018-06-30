@@ -6,11 +6,9 @@ cpp = meson.get_compiler('cpp')
 
 # - For festivald:
 festivald_cargs = []
-festivald_inc = []
 festivald_deps = []
 
 # - For festivald_client:
-festivald_client_inc = []
 festivald_client_deps = []
 
 ## systemd dependency:
@@ -50,10 +48,10 @@ if libeststring.found()
     festivald_client_deps += libeststring
 else
     libeststring_inc = include_directories(get_option('speech-tools-include'))
-    libeststring = cpp.find_library('libeststring')
-    festivald_inc += libeststring_inc
+    libeststring_lib = cpp.find_library('libeststring')
+    libeststring = declare_dependency(include_directories: libeststring_inc,
+                                      dependencies : libeststring_lib)
     festivald_deps += libeststring
-    festivald_client_inc += libeststring_inc
     festivald_client_deps += libeststring
 endif
 
@@ -67,10 +65,10 @@ if libestbase.found()
     festivald_client_deps += libestbase
 else
     libestbase_inc = include_directories(get_option('speech-tools-include'))
-    libestbase = cpp.find_library('libestbase', dependencies: libeststring)
-    festivald_inc += libestbase_inc
+    libestbase_lib = cpp.find_library('libestbase')
+    libestbase = declare_dependency(include_directories: libestbase_inc,
+                                    dependencies : [libestbase_lib, libeststring])
     festivald_deps += libestbase
-    festivald_client_inc += libestbase_inc
     festivald_client_deps += libestbase
 endif
 
@@ -82,8 +80,9 @@ if libestools.found()
     festivald_client_deps += libestools
 else
     libestools_inc = include_directories(get_option('speech-tools-include'))
-    libestools = cpp.find_library('libestools', dependencies: [libestbase, libeststring])
-    festivald_inc += libestools_inc
+    libestools_lib = cpp.find_library('libestools')
+    libestools = declare_dependency(include_directories: libestools_inc,
+                                    dependencies : [libestools_lib, libestbase, libeststring])
     festivald_deps += libestools
 endif
 
@@ -96,20 +95,19 @@ if festival.found()
     festivald_deps += festival
 else
     festival_inc = include_directories(get_option('festival-include'))
-    festival = cpp.find_library('Festival', dependencies: [libestbase, libestools, libeststring])
-    festivald_inc += festival_inc
+    festival_lib = cpp.find_library('Festival')
+    festival = declare_dependency(include_directories: festival_inc,
+                                  dependencies: [festival_lib, libestbase, libestools, libeststring])
     festivald_deps += festival
 endif
 
 festivald = executable('festivald', ['festivald.cc'],
            dependencies: festivald_deps,
-           include_directories: festivald_inc,
            cpp_args: festivald_cargs,
            install: true)
 
 festivald_client = executable('festivald_client', ['festivald_client.cc'],
            dependencies: festivald_client_deps,
-           include_directories: festivald_client_inc,
            install: true)
 
 
