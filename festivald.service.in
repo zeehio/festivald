@@ -5,6 +5,7 @@ Description=Festivald speech synthesis service
 Type=simple
 EnvironmentFile=-@sysconfdir@/festivald/festivald.conf
 ExecStart=@bindir@/festivald
+Sockets=festivald.socket
 PrivateTmp=yes
 ProtectHome=yes
 ProtectSystem=full
