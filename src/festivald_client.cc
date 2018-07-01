@@ -31,9 +31,8 @@
 /*  THIS SOFTWARE.                                                       */
 /*                                                                       */
 /*************************************************************************/
-/*             Author :  Alan W Black                                    */
-/*             Date   :  December 1996                                   */
-/*-----------------------------------------------------------------------*/
+/* Author : Sergio Oller, inspired on the festival client implementation */
+/*          by Alan W Black.                                             */
 /*                                                                       */
 /* Client program used to send comands/data to a festival server         */
 /*                                                                       */

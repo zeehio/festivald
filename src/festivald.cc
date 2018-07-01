@@ -31,14 +31,12 @@
 /*  THIS SOFTWARE.                                                       */
 /*                                                                       */
 /*************************************************************************/
-/*             Author :  Alan W Black                                    */
-/*             Date   :  December 1996                                   */
-/*-----------------------------------------------------------------------*/
-/*=======================================================================*/
-/* Copyright Sergio Oller, 2018 */
+/* Author : Sergio Oller, inspired on the festival server implementation */
+/*          by Alan W Black.                                             */
 /*                                                                       */
 /* A festival server on a socket file                                    */
 /*                                                                       */
+/*=======================================================================*/
 
 // Standard includes
 #include <cerrno>
