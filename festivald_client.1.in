@@ -1,0 +1,46 @@
+.TH FESTIVALD "1" "July 2018" "festivald version @festivald_version@" "User Commands"
+.SH NAME
+festivald \- manual page for festivald version @festivald_version@
+.SH SYNOPSIS
+.B festivald [options] [file0] [file1] ...
+.SH DESCRIPTION
+\fB\-\-socket\fR <string>
+.IP
+Path to festivald socket
+.PP
+\fB\-\-output\fR <string>
+.IP
+File to save output waveform to
+.PP
+\fB\-\-otype\fR <string> {riff}
+.IP
+Output waveform format
+.PP
+\fB\-\-prolog\fR <string>
+.IP
+filename containing commands to be sent to the server before standard
+commands (useful when using --ttw)
+.PP
+\fB\-\-async\fR
+.IP
+Asynchronous mode, server may send back multiple waveforms per text file
+.PP
+\fB\-\-ttw\fR
+.IP
+Text to waveform: take text from first arg or stdin get server to return
+waveform(s) stored in output or operated on by aucommand.
+.PP
+\fB\-\-withlisp\fR
+.IP
+Output lisp replies from server.
+.PP
+\fB\-\-tts_mode\fR <string>
+.IP
+TTS mode for file (default is fundamental).
+.PP
+\fB\-\-aucommand\fR <string>
+.IP
+Command to be applied to each waveform retruned from server.
+Use $FILE in string to refer to waveform file.
+.PP
+

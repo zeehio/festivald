@@ -1,0 +1,32 @@
+.TH FESTIVALD "1" "July 2018" "festivald version @festivald_version@" "User Commands"
+.SH NAME
+festivald \- manual page for festivald version @festivald_version@
+.SH SYNOPSIS
+.B festivald [options]
+.SH DESCRIPTION
+\fB\-q\fR
+.IP
+Do not load default festival setup files
+.PP
+\fB\-\-libdir\fR <string>
+.IP
+Set festival library directory path
+.PP
+\fB\-\-socket\fR <string>
+.IP
+Socket path. It should be in a directory with restricted permissions
+(if the socket is "systemd" uses systemd socket activation)
+.PP
+\fB\-\-max\-clients\fR <int> {10}
+.IP
+Max. number of clients allowed to connect to the server
+.PP
+\fB\-\-heap\fR <int> {10000000}
+.IP
+Set size of Lisp heap, should not normally need
+to be changed from its default
+.PP
+\fB\-v | -version \fR
+.IP
+Display version number and exit
+.PP

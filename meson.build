@@ -3,6 +3,7 @@ project('festivald', 'cpp')
 cpp = meson.get_compiler('cpp')
 
 ## Variables to store dependencies:
+festivald_version = '0.1'
 festivald_cargs = []
 festivald_deps = []
 festivald_client_deps = []
@@ -140,6 +141,7 @@ endif
 
 festivald_conf_vars.set('festivald_socket_path', festivald_socket_path)
 festivald_conf_vars.set('festivald_socket_path_conf', festivald_socket_path_conf)
+festivald_conf_vars.set('festivald_version', festivald_version)
 
 if libsystemd.found()
   unit = configure_file(
@@ -163,4 +165,20 @@ festivald_conf = configure_file(
   configuration: festivald_conf_vars,
   install_dir: festivald_conf_dir
 )
+
+festivald_man = configure_file(
+  input: 'festivald.1.in',
+  output: 'festivald.1',
+  configuration: festivald_conf_vars,
+)
+
+festivald_client_man = configure_file(
+  input: 'festivald_client.1.in',
+  output: 'festivald_client.1',
+  configuration: festivald_conf_vars,
+)
+
+
+install_man([festivald_man, festivald_client_man])
+
 
