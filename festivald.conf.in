@@ -19,5 +19,5 @@
 ## where the socket path is should exist and have well thought restricted permissions, 
 ## as it leaves an open shell to anyone with access to the socket).
 ## Note that the default value may be accessible by too many users...
-#FESTIVALD_SOCKET_PATH="systemd"
+#FESTIVALD_SOCKET_PATH=@festivald_socket_path_conf@
 

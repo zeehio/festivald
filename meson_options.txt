@@ -1,17 +1,15 @@
-option('with-systemd', type : 'boolean', value : true,
-       description: 'Compile festivald with optional systemd socket activation support')
+option('speech-tools-include', type: 'string', value : '/usr/include/speech_tools',
+       description: 'Path to the speech tools headers')
+option('festival-include', type: 'string', value : '/usr/include/festival',
+       description: 'Path to the festival headers')
+option('runstatedir', type : 'string', value : '/run',
+       description : 'Directory where the init script or service will create the festivald socket')
 option('systemd-socket-user', type : 'string', value : 'festivald',
         description: 'User that will own the systemd socket')
 option('systemd-socket-group', type : 'string', value : 'festivald',
         description: 'Group that will own the systemd socket')
 option('systemd-socket-perm', type : 'string', value : '0660',
         description: 'Permissions for the systemd socket')
-option('runstatedir', type : 'string', value : '/run',
-       description : 'Directory where systemd will create the festivald socket')
 option('systemdsystemunitdir', type : 'string', value : 'from_pkgconfig',
        description: 'Path where the festivald systemd units will be installed. Use from_pkgconfig to query pkg-config')
-option('speech-tools-include', type: 'string', value : '/usr/include/speech_tools',
-       description: 'Path to the speech tools headers')
-option('festival-include', type: 'string', value : '/usr/include/festival',
-       description: 'Path to the festival headers')
 

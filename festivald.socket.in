@@ -1,5 +1,5 @@
 [Socket]
-ListenStream=@runstatedir@/festivald.socket
+ListenStream=@festivald_socket_path@
 SocketUser=@systemd-socket-user@
 SocketGroup=@systemd-socket-group@
 SocketMode=@systemd-socket-perm@

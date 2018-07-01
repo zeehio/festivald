@@ -7,9 +7,9 @@ festivald_cargs = []
 festivald_deps = []
 festivald_client_deps = []
 
+libsystemd = dependency('libsystemd', required: false)
 ## systemd dependency:
-if get_option('with-systemd')
-    libsystemd = dependency('libsystemd', required: true)
+if libsystemd.found()
     festivald_deps += libsystemd
     festivald_cargs += ['-DWITH_SYSTEMD']
     # This is used to find the path where the .service and .socket files should be installed.
@@ -125,9 +125,10 @@ festivald_conf_vars.set('festivald_conf_dir', festivald_conf_dir)
 runstatedir = join_paths(get_option('prefix'), get_option('runstatedir'))
 festivald_conf_vars.set('runstatedir', runstatedir)
 
-if get_option('with-systemd')
+festivald_socket_path = join_paths(runstatedir, 'festival', 'festivald.socket')
+if libsystemd.found()
   ## The systemd unit service and socket files:
-
+  festivald_socket_path_conf = 'systemd'
   foreach key : ['systemd-socket-user', 'systemd-socket-group', 'systemd-socket-perm']
     festivald_conf_vars.set(key, get_option(key))
   endforeach
@@ -145,7 +146,12 @@ if get_option('with-systemd')
     configuration: festivald_conf_vars,
     install_dir: systemdsystemunitdir
   )
+else
+  festivald_socket_path_conf = festivald_socket_path
 endif
+
+festivald_conf_vars.set('festivald_socket_path', festivald_socket_path)
+festivald_conf_vars.set('festivald_socket_path_conf', festivald_socket_path_conf)
 
 festivald_conf = configure_file(
   input: 'festivald.conf.in',
