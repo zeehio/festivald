@@ -1,6 +1,6 @@
 .TH FESTIVALD "1" "July 2018" "festivald version @festivald_version@" "User Commands"
 .SH NAME
-festivald \- manual page for festivald version @festivald_version@
+festivald \- a unix socket daemon for festival, the speech synthesis system
 .SH SYNOPSIS
 .B festivald [options]
 .SH DESCRIPTION
