@@ -98,12 +98,12 @@ else
     festivald_deps += festival
 endif
 
-festivald = executable('festivald', ['festivald.cc'],
+festivald = executable('festivald', ['src/festivald.cc'],
            dependencies: festivald_deps,
            cpp_args: festivald_cargs,
            install: true)
 
-festivald_client = executable('festivald_client', ['festivald_client.cc'],
+festivald_client = executable('festivald_client', ['src/festivald_client.cc'],
            dependencies: festivald_client_deps,
            install: true)
 
@@ -145,14 +145,14 @@ festivald_conf_vars.set('festivald_version', festivald_version)
 
 if libsystemd.found()
   unit = configure_file(
-    input: 'festivald.service.in',
+    input: 'etc/festivald.service.in',
     output: 'festivald.service',
     configuration: festivald_conf_vars,
     install_dir: systemdsystemunitdir
   )
 
   socket = configure_file(
-    input: 'festivald.socket.in',
+    input: 'etc/festivald.socket.in',
     output: 'festivald.socket',
     configuration: festivald_conf_vars,
     install_dir: systemdsystemunitdir
@@ -160,20 +160,20 @@ if libsystemd.found()
 endif
 
 festivald_conf = configure_file(
-  input: 'festivald.conf.in',
+  input: 'etc/festivald.conf.in',
   output: 'festivald.conf',
   configuration: festivald_conf_vars,
   install_dir: festivald_conf_dir
 )
 
 festivald_man = configure_file(
-  input: 'festivald.1.in',
+  input: 'man/festivald.1.in',
   output: 'festivald.1',
   configuration: festivald_conf_vars,
 )
 
 festivald_client_man = configure_file(
-  input: 'festivald_client.1.in',
+  input: 'man/festivald_client.1.in',
   output: 'festivald_client.1',
   configuration: festivald_conf_vars,
 )
