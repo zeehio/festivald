@@ -249,9 +249,8 @@ static int festivald(int* f_socket, const char* socket_path,
       }
       return 0;
     }
-#else
-    return festivald_nosystemd(f_socket, socket_path, socket_created);
 #endif
+    return festivald_nosystemd(f_socket, socket_path, socket_created);
 }
 
 static int festival_accept_connections(int fd, int max_clients) {
