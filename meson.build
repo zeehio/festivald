@@ -126,7 +126,7 @@ festivald_conf_vars.set('festivald_conf_dir', festivald_conf_dir)
 runstatedir = join_paths(get_option('prefix'), get_option('runstatedir'))
 festivald_conf_vars.set('runstatedir', runstatedir)
 
-festivald_socket_path = join_paths(runstatedir, 'festival', 'festivald.socket')
+festivald_socket_path = join_paths(runstatedir, 'festivald', 'festivald.socket')
 
 
 if libsystemd.found()
