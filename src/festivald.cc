@@ -100,7 +100,8 @@ int main(int argc, char** argv) {
             "--socket <string>\n" + "              Socket path. It should be "
                                     "in a directory with restricted "
                                     "permissions\n" +
-            "              (if the socket is \"systemd\" uses systemd socket activation)\n" +
+            "              (if the socket is \"systemd\" uses systemd socket "
+            "activation)\n" +
             "--max-clients <int> {10}\n" + "              Max. number of "
                                            "clients allowed to connect to the "
                                            "server\n" +
@@ -236,18 +237,18 @@ static int festivald(int* f_socket, const char* socket_path,
     *socket_created = false;
 #ifdef WITH_SYSTEMD
     if (strcmp(socket_path, "systemd") == 0) {
-      int n;
-      n = sd_listen_fds(0);
-      if (n > 1) {
-        std::cerr << "Too many file descriptors received." << std::endl;
-        return -1;
-      } else if (n == 1) {
-        *f_socket = SD_LISTEN_FDS_START + 0;
-      } else {
-        std::cerr << "No systemd socket passed. Quitting." << std::endl;
-        return -1;
-      }
-      return 0;
+        int n;
+        n = sd_listen_fds(0);
+        if (n > 1) {
+            std::cerr << "Too many file descriptors received." << std::endl;
+            return -1;
+        } else if (n == 1) {
+            *f_socket = SD_LISTEN_FDS_START + 0;
+        } else {
+            std::cerr << "No systemd socket passed. Quitting." << std::endl;
+            return -1;
+        }
+        return 0;
     }
 #endif
     return festivald_nosystemd(f_socket, socket_path, socket_created);
