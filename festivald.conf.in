@@ -14,10 +14,10 @@
 #FESTIVALD_MAX_CLIENTS=10
 
 ## Path to the festivald.socket.
-## When the socket is created by systemd (systemd socket activation), it is ignored.
-## Otherwise festivald will create the socket here (the directory should exist
-## and have thought restricted permissions, as it leaves an open shell to anyone
-## with access to the socket).
+## When the FESTIVALD_SOCKET_PATH is systemd, the systemd provided socket is used.
+## Otherwise festivald will create the socket at FESTIVALD_SOCKET_PATH (the directory 
+## where the socket path is should exist and have well thought restricted permissions, 
+## as it leaves an open shell to anyone with access to the socket).
 ## Note that the default value may be accessible by too many users...
-#FESTIVALD_SOCKET_PATH="@runstatedir@/festivald.socket"
+#FESTIVALD_SOCKET_PATH="systemd"
 
