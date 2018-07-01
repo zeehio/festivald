@@ -126,13 +126,22 @@ runstatedir = join_paths(get_option('prefix'), get_option('runstatedir'))
 festivald_conf_vars.set('runstatedir', runstatedir)
 
 festivald_socket_path = join_paths(runstatedir, 'festival', 'festivald.socket')
+
+
 if libsystemd.found()
   ## The systemd unit service and socket files:
   festivald_socket_path_conf = 'systemd'
   foreach key : ['systemd-socket-user', 'systemd-socket-group', 'systemd-socket-perm']
     festivald_conf_vars.set(key, get_option(key))
   endforeach
+else
+  festivald_socket_path_conf = festivald_socket_path
+endif
 
+festivald_conf_vars.set('festivald_socket_path', festivald_socket_path)
+festivald_conf_vars.set('festivald_socket_path_conf', festivald_socket_path_conf)
+
+if libsystemd.found()
   unit = configure_file(
     input: 'festivald.service.in',
     output: 'festivald.service',
@@ -146,12 +155,7 @@ if libsystemd.found()
     configuration: festivald_conf_vars,
     install_dir: systemdsystemunitdir
   )
-else
-  festivald_socket_path_conf = festivald_socket_path
 endif
-
-festivald_conf_vars.set('festivald_socket_path', festivald_socket_path)
-festivald_conf_vars.set('festivald_socket_path_conf', festivald_socket_path_conf)
 
 festivald_conf = configure_file(
   input: 'festivald.conf.in',
